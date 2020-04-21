@@ -6,6 +6,12 @@
 #include "WifiClient.h"
 #include "EthernetClient.h"
 
+#define eISCP_SUCCESS 0
+#define eISCP_ERR_CONNECTION_FAILED 1
+#define eISCP_ERR_CONNECTION_TIMEOUT 2
+
+#define eISCP_REQUEST_TIMEOUT 5000
+
 class eISCP {
   public:
     /** Quick eISCP initialization using port 60128 and WiFiClient
@@ -27,6 +33,12 @@ class eISCP {
     */
     eISCP(String ip_address, int port, WiFiClient client);
 
+    /** Send eISCP command
+      @param command Command to send to your eISCP device
+      @return eISCP_SUCCESS if successful, else eISCP_ERR_CONNECTION_FAILED or eISCP_ERR_CONNECTION_TIMEOUT
+    */
+    int send(String command);
+    
   private:
     Client* _client;
     String _ip_address;
