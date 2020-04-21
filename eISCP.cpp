@@ -1,27 +1,15 @@
 #include "Arduino.h"
 #include "eISCP.h"
 
-eISCP::eISCP(String ip_address) {
-	_ip_address = ip_address;
-	WiFiClient client;
-	_client = &client;
-	_port = 60128;
-}
-
-eISCP::eISCP(String ip_address, int port, EthernetClient client) {
-	_client = &client;
+eISCP::eISCP(const char ip_address[], int port, Client* client)
+{
 	_ip_address = ip_address;
 	_port = port;
+	_client = client;
 }
 
-eISCP::eISCP(String ip_address, int port, WiFiClient client) {
-	_client = &client;
-	_ip_address = ip_address;
-	_port = port;
-}
-
-int eISCP::send(String command) {
-
+int eISCP::send(String command)
+{
 	// Body and header structure based on https://github.com/miracle2k/onkyo-eiscp/blob/master/eiscp/core.py
 	// Integers need to be swapped to Big Endian
 	String body = "!1" + command + '\r';
