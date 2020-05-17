@@ -12,7 +12,7 @@ int eISCP::send(String command)
 {
 	// Body and header structure based on https://github.com/miracle2k/onkyo-eiscp/blob/master/eiscp/core.py
 	// Integers need to be swapped to Big Endian
-	String body = "!1" + command + '\r';
+	static String body = "!1" + command + '\r';
 	struct __attribute__ ((packed)) {
 		char t1[4] = {'I', 'S', 'C', 'P'};
 		uint32_t i1 = __builtin_bswap32(16);
@@ -26,7 +26,7 @@ int eISCP::send(String command)
 	
 	// Send header byte by byte
 	const byte* p = (const byte*) &header;
-	for (int i = 0; i < sizeof header; i++)
+	for (unsigned int i = 0; i < sizeof header; i++)
 		_client->write(*p++);
 	
 	_client->print(body);
