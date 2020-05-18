@@ -7,26 +7,39 @@
 #define eISCP_SUCCESS 0
 #define eISCP_ERR_CONNECTION_FAILED 1
 #define eISCP_ERR_CONNECTION_TIMEOUT 2
+#define eISCP_ERR_CORRUPTED_HEADER 10
+#define eISCP_ERR_CORRUPTED_MESSAGE 11
 
-#define eISCP_REQUEST_TIMEOUT 5000
+#define eISCP_MESSAGE_INITIALIZED 0
+#define eISCP_MESSAGE_PENDING 1
+#define eISCP_MESSAGE_SENT 2
+#define eISCP_MESSAGE_RECEIVED 3
+#define eISCP_MESSAGE_INVALID -1
 
-class eISCP 
-{
+#define eISCP_REQUEST_TIMEOUT 50
+
+class eISCP_Message {
   public:
-    /** Initialize eISCP
-      @param ip_address eiSCP IP Address
-      @param port eiSCP port
-      @param client Pointer to a WifiClient, EthernetClient or GSMCLient instance
-    */
+    String encode();
+    void decode(char* cmsg);
+    String content;
+    int status = 0;
+};
+
+class eISCP {
+  public:
     eISCP(const char ip_address[], int port, Client* client);
-    
-    /** Send eISCP command
-      @param command Command string
-      @return eISCP_SUCCESS if successful, else eISCP_ERR_CONNECTION_FAILED or eISCP_ERR_CONNECTION_TIMEOUT
-    */
-    int send(String command);
+    void send(String command);
+    void send(eISCP_Message& message);
+    bool connected();
+    void setCallback(void (*callback)(eISCP_Message));
+    void handle();
 
   private:
+    int get_packet();
+    void send_packet(eISCP_Message* message);
+    eISCP_Message* _nextMessage;
+    void (*_callback)(eISCP_Message);
     Client* _client;
     const char* _ip_address;
     int _port;
