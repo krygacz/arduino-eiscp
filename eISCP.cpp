@@ -34,7 +34,7 @@ bool eISCP::connected() {
 }
 
 
-void eISCP::setCallback(void (*callback)(eISCP_Message)) {
+void eISCP::set_callback(void (*callback)(eISCP_Message)) {
 	_callback = callback;
 }
 

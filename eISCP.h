@@ -32,7 +32,7 @@ class eISCP {
     void send(String command);
     void send(eISCP_Message& message);
     bool connected();
-    void setCallback(void (*callback)(eISCP_Message));
+    void set_callback(void (*callback)(eISCP_Message));
     void handle();
 
   private:
