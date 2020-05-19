@@ -28,14 +28,14 @@ void setup() {
   
   // We can send messages by just passing a string to the send() method:
   device.send(command);
-  
+
   // Or create an eISCP_Message instance first...
-  eISCP_Message my_message;
-  my_message.content = command;
+  eISCP_Message* my_message = new eISCP_Message;
+  my_message->content = command;
   device.send(my_message);
   
   // ...so that we can later check the status of our message:
-  if(my_message.status == eISCP_MESSAGE_PENDING)
+  if(my_message->status == eISCP_MESSAGE_PENDING)
     Serial.println("Command pending");
 
   // Let's set a callback so that we can receive messages back from our device
