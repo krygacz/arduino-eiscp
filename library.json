@@ -1,0 +1,24 @@
+{
+    "name": "arduino-eiscp",
+    "description": "Arduino library for controlling eISCP-based devices (eg. Onkyo and Pioneer receivers)",
+    "keywords": "eISCP,Pioneer,Onkyo,Receivers,control,LAN",
+    "authors": {
+        "name": "Krystian Gaczyński",
+        "maintainer": true
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/krygacz/arduino-eiscp.git"
+    },
+    "version": "0.2.2",
+    "license": "GPL-3.0-only",
+    "frameworks": "arduino",
+    "platforms": [
+        "espressif32", "espressif8266"
+    ],
+    "dependencies": [
+    ],
+    "examples": [
+        "[Ee]xamples/*/*.ino"
+    ]
+}
