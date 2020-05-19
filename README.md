@@ -31,11 +31,11 @@ device.send("PWR01");
 ```
 If you want to keep track of the status of your message, create an ```eISCP_Message``` instance first:
 ```c++
-eISCP_Message my_message;
-my_message.content = "PWR01";
+eISCP_Message* my_message = new eISCP_Message;
+my_message->content = "PWR01";
 device.send(my_message);
 ```
-Then you can check the status using ```my_message.status```
+Then you can check the status using ```my_message->status```
 
 Here are the ```eISCP_Message``` status codes:
 
@@ -84,14 +84,14 @@ void setup() {
   
   // We can send messages by just passing a string to the send() method:
   device.send(command);
-  
+
   // Or create an eISCP_Message instance first...
-  eISCP_Message my_message;
-  my_message.content = command;
+  eISCP_Message* my_message = new eISCP_Message;
+  my_message->content = command;
   device.send(my_message);
   
   // ...so that we can later check the status of our message:
-  if(my_message.status == eISCP_MESSAGE_PENDING)
+  if(my_message->status == eISCP_MESSAGE_PENDING)
     Serial.println("Command pending");
 
   // Let's set a callback so that we can receive messages back from our device
