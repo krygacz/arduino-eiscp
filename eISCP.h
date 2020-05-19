@@ -24,15 +24,15 @@ class eISCP_Message {
   public:
     String encode();
     void decode(char* cmsg);
-    String content = "";
-    int status = 0;
+    String content;
+    int status;
 };
 
 class eISCP {
   public:
     eISCP(const char ip_address[], int port, Client* client);
     void send(String command);
-    void send(eISCP_Message& message);
+    void send(eISCP_Message* message);
     bool connected();
     void set_callback(void (*callback)(eISCP_Message));
     void handle();
@@ -41,7 +41,7 @@ class eISCP {
     int get_packet();
     void send_packet(eISCP_Message* message);
     void enqueue(eISCP_Message* message);
-    eISCP_Message* _buffer[eISCP_MESSAGE_BUFFER_SIZE];
+    eISCP_Message** _buffer;
     unsigned int _buffer_index = 0;
     void (*_callback)(eISCP_Message);
     Client* _client;

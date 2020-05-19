@@ -22,6 +22,7 @@ eISCP::eISCP(const char ip_address[], int port, Client* client) {
 	_ip_address = ip_address;
 	_port = port;
 	_client = client;
+	_buffer = new eISCP_Message* [eISCP_MESSAGE_BUFFER_SIZE];
 }
 
 
@@ -47,10 +48,6 @@ void eISCP::handle() {
 	}
 	// Send queued messages
 	for(unsigned int i = 0; i < _buffer_index; i++){
-		// Without the following line esp8266 is reset by wdt
-		// yield() doesn't help
-		// I honestly have no idea what's going on here
-		String black_magic_stuff = String(i);
 		yield();
 		send_packet(_buffer[i]);
 	}
@@ -67,14 +64,14 @@ void eISCP::enqueue(eISCP_Message* message){
 
 
 void eISCP::send(String command) {
-	eISCP_Message message;
-	message.content = command;
-	enqueue(&message);
+	eISCP_Message* message = new eISCP_Message;
+	message->content = command;
+	enqueue(message);
 }
 
 
-void eISCP::send(eISCP_Message& message) {
-	enqueue(&message);
+void eISCP::send(eISCP_Message* message) {
+	enqueue(message);
 }
 
 
