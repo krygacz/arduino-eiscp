@@ -22,7 +22,6 @@ eISCP::eISCP(const char ip_address[], int port, Client* client) {
 	_ip_address = ip_address;
 	_port = port;
 	_client = client;
-	_client->connect(_ip_address, _port);
 }
 
 
@@ -43,35 +42,44 @@ void eISCP::handle() {
 	if(!connected()) return;
 	// Read all incoming messages
 	while(_client->available() >= 16){
-		int status = get_packet();
-		// If header or body is corrupted 
-		// we need to flush the buffer
-		if(status >= 10)
-			while(_client->read()) yield();
 		yield();
+		get_packet();
 	}
-	// Send queued message
-	if(_nextMessage->status == eISCP_MESSAGE_PENDING)
-		send_packet(_nextMessage);
+	// Send queued messages
+	for(unsigned int i = 0; i < _buffer_index; i++){
+		// Without the following line esp8266 is reset by wdt
+		// yield() doesn't help
+		// I honestly have no idea what's going on here
+		String black_magic_stuff = String(i);
+		yield();
+		send_packet(_buffer[i]);
+	}
+	_buffer_index = 0;
+}
+
+
+void eISCP::enqueue(eISCP_Message* message){
+	message->status = eISCP_MESSAGE_PENDING;
+	// If buffer is full we need to process it first
+	if(_buffer_index >= eISCP_MESSAGE_BUFFER_SIZE) handle();
+	_buffer[_buffer_index++] = message;
 }
 
 
 void eISCP::send(String command) {
 	eISCP_Message message;
 	message.content = command;
-	message.status = eISCP_MESSAGE_PENDING;
-	_nextMessage = &message;
+	enqueue(&message);
 }
 
 
 void eISCP::send(eISCP_Message& message) {
-	message.status = eISCP_MESSAGE_PENDING;
-	_nextMessage = &message;
+	enqueue(&message);
 }
 
 
 void eISCP::send_packet(eISCP_Message* message) {
-	String body = message->encode();
+	static String body = message->encode();
 	// Header structure based on https://github.com/miracle2k/onkyo-eiscp/blob/master/eiscp/core.py
 	// Integers need to be swapped to Big Endian
 	struct __attribute__ ((packed)) {
@@ -86,9 +94,9 @@ void eISCP::send_packet(eISCP_Message* message) {
 	const byte* p = (const byte*) &header;
 	for (unsigned int i = 0; i < sizeof header; i++)
 		_client->write(*p++);
-
 	_client->print(body);
 	message->status = eISCP_MESSAGE_SENT;
+	return;
 }
 
 
@@ -114,14 +122,13 @@ int eISCP::get_packet() {
 	char buffer[msg_size];
 	unsigned long timeout = millis();
 	unsigned int index = 0;
-
 	// Read message to buffer byte by byte
 	while(index < msg_size){
+		yield();
 		if (millis() - timeout > eISCP_REQUEST_TIMEOUT)
 			break;
 		byte b = _client->read();
 		if(b) buffer[index++] = b;
-		yield();
 	}
 	
 	eISCP_Message message;

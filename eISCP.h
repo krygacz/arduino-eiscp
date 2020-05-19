@@ -16,13 +16,15 @@
 #define eISCP_MESSAGE_RECEIVED 3
 #define eISCP_MESSAGE_INVALID -1
 
-#define eISCP_REQUEST_TIMEOUT 50
+#define eISCP_REQUEST_TIMEOUT 500
+
+#define eISCP_MESSAGE_BUFFER_SIZE 50
 
 class eISCP_Message {
   public:
     String encode();
     void decode(char* cmsg);
-    String content;
+    String content = "";
     int status = 0;
 };
 
@@ -38,7 +40,9 @@ class eISCP {
   private:
     int get_packet();
     void send_packet(eISCP_Message* message);
-    eISCP_Message* _nextMessage;
+    void enqueue(eISCP_Message* message);
+    eISCP_Message* _buffer[eISCP_MESSAGE_BUFFER_SIZE];
+    unsigned int _buffer_index = 0;
     void (*_callback)(eISCP_Message);
     Client* _client;
     const char* _ip_address;
