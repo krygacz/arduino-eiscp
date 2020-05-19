@@ -1,3 +1,11 @@
+/**
+ * arduino-eiscp
+ * Arduino library for controlling eISCP-based devices
+ * 
+ * visit https://github.com/krygacz/arduino-eiscp for more information
+ * 
+*/
+
 #include <ESP8266WiFi.h>
 #include <eISCP.h>
 
@@ -51,7 +59,6 @@ void loop() {
 
 void my_function(eISCP_Message message){
   if(message.status == eISCP_MESSAGE_INVALID){
-    Serial.println("Message invalid: " + message.content);
     // The message is probably corrupted
     return;
   }
