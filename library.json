@@ -10,7 +10,7 @@
         "type": "git",
         "url": "https://github.com/krygacz/arduino-eiscp.git"
     },
-    "version": "0.2.3",
+    "version": "0.2.4",
     "license": "GPL-3.0-only",
     "frameworks": "arduino",
     "platforms": [
