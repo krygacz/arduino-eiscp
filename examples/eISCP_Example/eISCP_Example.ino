@@ -17,6 +17,8 @@ int device_port       = 60128;    // 60128 for Onkyo A/V receivers
 WiFiClient client;
 eISCP device(device_ip, device_port, &client);
 
+void my_function(eISCP_Message message);
+
 void setup() {
   // Connect to a WiFi network
   Serial.begin(115200);
