@@ -29,7 +29,6 @@ eISCP::eISCP(const char _ip_address[], int _port, Client* _client) {
 	port = _port;
 	client = _client;
 	callback = nullptr;
-	client->connect(ip_address, port);
 }
 
 
